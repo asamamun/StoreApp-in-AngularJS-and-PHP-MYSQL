@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="sportsStore">
+
+<head>
+    <title>SportsStore</title>
+    <script type="text/javascript">
+document.write("<base href='" + document.location + "' />");
+</script>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="assets/js/angular.min.js"></script>
+    <script src="filters/customFilters.js"></script>    
+    <script>
+        var model = {
+            path: "",
+            error:""
+        }
+        var app = angular.module("sportsStore", ["ngRoute","customFilters","cart"])
+        .config(function($routeProvider, $locationProvider){
+                       
+           $routeProvider.when("/home", {
+templateUrl: "views/productList.html"
+});
+            $routeProvider.when("/checkout", {
+templateUrl: "views/checkoutSummary.html"
+});
+            $routeProvider.when("/products", {
+templateUrl: "views/productList.html"
+});
+            $routeProvider.when("/complete", {
+templateUrl: "views/thankYou.html"
+});
+$routeProvider.when("/placeorder", {
+templateUrl: "views/placeOrder.html"
+});
+            $routeProvider.otherwise({
+templateUrl: "views/productList.html"
+});
+            
+            $locationProvider.html5Mode(true);
+        });
+        app.controller("sportsCtrl", ["$scope","$http","cart","$location", function($scope,$http,cart,$location) {
+            $scope.products = model;
+            //place order start
+            $scope.sendOrder = function (shippingDetails) {
+                //console.log(shippingDetails);
+                //return;
+            var order = angular.copy(shippingDetails);
+            order.products = cart.getProducts();
+            //console.log(order);
+            //return;
+            if(cart.getProducts().length == 0) return;
+            $http.post("models/orders.php", order)
+                .then(function (data) {
+                    //if(data.status == 200){}
+                    console.log(data.data);
+//$scope.data.orderId = data.id;
+                    cart.getProducts().length = 0;
+                },function(data){
+                    alert(data);
+                }).
+            finally(function () {
+                $location.path("/complete");
+            });
+        }
+            //place order end
+        }]);
+        //run the app        
+        app.run(function($http) {
+            $http.post('models/products.php', {
+                    action: 'showall',
+                })
+                .then(
+                    function(d) {
+                        //console.log(d.data);
+                        model.data = d.data;
+                        //model.items = d.data;
+                    },
+                    function(d) {
+                        model.error = d.data;
+                    });
+
+        });
+
+    </script>
+    <script src="controllers/productListControllers.js"></script>
+    <script src="components/cart/cart.js"></script>
+    <script src="assets/js/angular-route.min.js"></script>
+    <script src="controllers/checkoutControllers.js"></script>
+</head>
+
+<body>
+<ng-include src="'views/topbar.html'"></ng-include>
+        <div class="alert alert-danger" ng-show="products.error">
+Error ({{data.error.status}}). The product data was not loaded.
+<a href="app.html" class="alert-link">Click here to try again</a>
+</div>
+    <div class="container" ng-controller="sportsCtrl">
+<!--        <ng-include src="'views/productList.html'"></ng-include>        -->
+   <ng-view />
+    </div>
+</body>
+
+</html>
