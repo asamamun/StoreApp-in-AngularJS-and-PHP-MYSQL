@@ -1,0 +1,1 @@
+<h3>adminSettings.html page</h3>

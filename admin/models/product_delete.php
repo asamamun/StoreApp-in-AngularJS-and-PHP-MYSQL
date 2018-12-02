@@ -1,4 +1,11 @@
 <?php
+session_start();
+if(!isset($_SESSION['valid_admin'])){
+  exit;  
+}
+if(!$_SESSION['valid_admin']){
+    exit;
+}
 require "database.php";
 $_POST = json_decode(file_get_contents('php://input'),true);
 if($_POST['action']=='delete'){

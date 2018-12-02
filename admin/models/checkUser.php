@@ -22,13 +22,15 @@ else{
         'success'=>false,
         'message'=>'Invalid password'
     ];
+    $_SESSION['valid_admin'] = false;
 }
 }
 else{
    $data = [
         'success'=>false,
         'message'=>'Username Invalid'
-    ]; 
+    ];
+    $_SESSION['valid_admin'] = false;
 }
 echo json_encode($data);
 ?>

@@ -1,4 +1,11 @@
 <?php
+session_start();
+if(!isset($_SESSION['valid_admin'])){
+  exit;  
+}
+if(!$_SESSION['valid_admin']){
+    exit;
+}
 require "../../inc/database.php";
 $conn = new Database();
 $selectQuery = "select * from orders where 1";

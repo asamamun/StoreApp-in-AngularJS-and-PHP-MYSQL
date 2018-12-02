@@ -1,4 +1,11 @@
 <?php
+session_start();
+if(!isset($_SESSION['valid_admin'])){
+  exit;  
+}
+if(!$_SESSION['valid_admin']){
+    exit;
+}
 require "database.php";
 $selectQuery = "select * from products where 1";
 $selectQueryResult = $conn->query($selectQuery);
